@@ -1,10 +1,11 @@
 import os
 from flask import Flask, request, jsonify
-from src.routes.userRoutes import userRoutes
+from src.routes.userRoutes import userRouter
 
 # Initialize Flask App
 app = Flask(__name__)
-app.register_blueprint(userRoutes)
+
+app.register_blueprint(userRouter, url_prefix = "/api/users")
 
 
 
