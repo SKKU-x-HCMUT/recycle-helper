@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
       title: "Recycle Helper",
       home: Scaffold(
         appBar: AppBar(title: const Text('Login')),
-        body: const LoginWidget(),
+        body: const Padding(
+          padding: EdgeInsets.all(20),
+          child: LoginWidget(),
+        ),
       ),
     );
   }
@@ -62,18 +65,23 @@ class _LoginWidgetState extends State<LoginWidget> {
           ),
           //submit button
           ElevatedButton(
-            onPressed: _submit,
-            child: const Text('Submit'),
+            onPressed: _login,
+            child: const Text('Login'),
           ),
         ],
       ),
     );
   }
 
-  void _submit() {
+  void _login() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
       // calling login API goes here
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Logged in account: \"$_email\"")),
+      ); //Show toast when successfully logged in
     }
   }
 }
