@@ -1,5 +1,6 @@
 
 from flask import request, jsonify, session, redirect, url_for
+from src.models.User import User
 from src.config.firestore.db import db
 from firebase_admin import auth
 import pyrebase
@@ -17,21 +18,11 @@ class UserController:
         def decorated_function(*args, **kwargs):
             if 'user' not in session:
                 # return redirect(url_for(''))      Should redirect to login page in Flutter
-                return {'message': 'User must log in'}, 403
+                return {'message': 'User must log in to perform this action'}, 403
             return f(*args, **kwargs)
         return decorated_function
     
     @login_required
-    def get_all_users():
-        """
-            Get all documents in collection users
-        """
-        try:
-            all_users = [doc.to_dict() for doc in db.collection('users').stream()]
-            return jsonify(all_users), 200
-        except Exception as e:
-            return f"An Error Occured: {e}"
-
     def get_user(localId):
         """
             Get user document by user's id
@@ -40,7 +31,35 @@ class UserController:
             user = db.collection('users').document(localId).get()
             return jsonify(user.to_dict()), 200
         except Exception as e:
-            return f"An Error Occured: {e}"
+            return f"An Error Occured: {e}", 500
+
+    @login_required
+    def update_user(localId):
+        """
+            Update other profile information: (name, dob, sex, nationality, phone_number)
+        """
+        try:
+            # get information from request
+            name = request.json.get('name')
+            sex = request.json.get('sex')
+            nationality = request.json.get('nationality')
+            phone_number = request.json.get('phone_number')
+            dob = request.json.get('dob')
+
+            # find user in Firestore's "users" collection 
+            user_ref = db.collection('users').document(localId)
+            user_info = user_ref.get().to_dict()
+            if user_info == None:
+                return f"An Error Occured: Cannot find user with localId {localId}", 500
+
+            # create user model
+            userObject = User(email=user_info['email'], name=name, dob=dob, sex=sex, nationality=nationality, phone_number=phone_number, point=user_info['point'])
+            db.collection('users').document(localId).update(userObject.to_dict())
+
+            updatedUser = user_ref.get().to_dict()
+            return jsonify(updatedUser), 200
+        except Exception as e:
+            return f"An Error Occured: {e}", 500
 
     # Authentication functions
     def register():
@@ -55,9 +74,9 @@ class UserController:
         try:
             # create user on firebase authentication
             user = pbAuth.create_user_with_email_and_password(email, password)
-            print(json.dumps(user))
+
             # create user on firestore
-            db.collection('users').document(user['localId']).set({"email": user['email']})
+            db.collection('users').document(user['localId']).set({"email": user['email'], "point": 0})
             return {'message': f'Successfully created user {user["email"]}'}, 200
         except Exception as e:
             return {'message': f'Error creating user: {e}'},400
@@ -71,7 +90,6 @@ class UserController:
         password = request.json.get('password')
         try:
             user = pbAuth.sign_in_with_email_and_password(email, password)
-            print(json.dumps(user))
             id_token = user['idToken']
             refreshToken = user['refreshToken']
             session['user'] = user['localId']
@@ -84,4 +102,4 @@ class UserController:
             session.pop('user')
             return {'message': 'Successfully logged out'}
         else:
-            return {'message': 'User is not in session'}
+            return {'message': 'User is not in session'}, 500
