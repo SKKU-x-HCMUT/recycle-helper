@@ -10,16 +10,14 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   Future<void> requestCamera() async {
-    final serviceStatus = await Permission.camera.isGranted;
-    bool isCameraOn = serviceStatus == ServiceStatus.enabled;
+    var status = await Permission.camera.request();
 
-    final status = await Permission.camera.request();
-
-    if (status == PermissionStatus.granted) {
+    if (status.isGranted) {
       print('Permission Granted');
-    } else if (status == PermissionStatus.denied) {
+    } else if (status.isDenied) {
+      // We didn't ask for permission yet or the permission has been denied before but not permanently.
       print('Permission denied');
-    } else if (status == PermissionStatus.permanentlyDenied) {
+    } else if (status.isPermanentlyDenied) {
       print('Permission Permanently Denied');
       await openAppSettings();
     }
@@ -31,12 +29,9 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-          margin: const EdgeInsets.all(10),
-          child: ElevatedButton(
-            onPressed: requestCamera,
-            child: const Text('Request Runtime Camera Permission'),
-          ),
+        child: ElevatedButton(
+          onPressed: requestCamera,
+          child: const Text('Request Runtime Camera Permission'),
         ),
       ),
     );

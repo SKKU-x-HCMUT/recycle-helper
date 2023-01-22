@@ -50,6 +50,8 @@
 
 	<key>NSCameraUsageDescription</key>
 	<string>Camera is needed to take picture of the garbage.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone is needed to allow Camera Permission.</string>
 
 </dict>
 </plist>
