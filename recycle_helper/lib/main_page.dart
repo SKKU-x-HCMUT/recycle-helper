@@ -9,7 +9,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  Future<void> requestCameraPermission() async {
+  Future<void> requestCamera() async {
     final serviceStatus = await Permission.camera.isGranted;
     bool isCameraOn = serviceStatus == ServiceStatus.enabled;
 
@@ -34,7 +34,7 @@ class _MainPageState extends State<MainPage> {
         child: Container(
           margin: const EdgeInsets.all(10),
           child: ElevatedButton(
-            onPressed: requestCameraPermission,
+            onPressed: requestCamera,
             child: const Text('Request Runtime Camera Permission'),
           ),
         ),
