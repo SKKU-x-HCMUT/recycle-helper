@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recycle_helper/authentication.dart';
 import 'package:recycle_helper/main_page.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: "Recycle Helper",
       home: //check login state and go to loginpage or mainpage
           //if(login_state == false)
-          LoginPage(),
+          MainPage(),
     );
   }
 }

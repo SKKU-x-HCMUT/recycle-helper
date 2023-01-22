@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		lfa8v7Bqe3ht+/zpedCqbRQRNQk=
+		QIdmSDPlklZalSMZProtHYrnjiU=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		P5ljXKcz7QRFIQNtCL9LQMzcFMA=
+		7ZiKa6UXMC68XbbZa4ERI8J6k4U=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<data>
@@ -66,7 +66,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/NOTICES.Z</key>
 		<data>
-		XhOpDPdRgHGH9mWw9DR0q77cSqA=
+		YKzJr+b6IGwcnUpFTQl8Zk+r914=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
@@ -78,7 +78,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		qaQrlXRV9wwmEyoPoh7qWigoHVw=
+		M1ftEVnvqri0lFFICQ4cehtHcVE=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -176,9 +176,33 @@
 		<data>
 		q5acp6rOkQ+ckG1e10c6ecrMr8U=
 		</data>
+		<key>Frameworks/camera_avfoundation.framework/Info.plist</key>
+		<data>
+		5sZd1KtNewRMM6gVLN3LPvoQ8+E=
+		</data>
+		<key>Frameworks/camera_avfoundation.framework/_CodeSignature/CodeResources</key>
+		<data>
+		MbV2MYNmqOpJmYpdNyfUhr7Pj/U=
+		</data>
+		<key>Frameworks/camera_avfoundation.framework/camera_avfoundation</key>
+		<data>
+		Z5kSilIA8qrg/yH3RXmRei4z2dU=
+		</data>
+		<key>Frameworks/path_provider_ios.framework/Info.plist</key>
+		<data>
+		Rt/lOQSC+TiE0nDGqORRcmi3Nyw=
+		</data>
+		<key>Frameworks/path_provider_ios.framework/_CodeSignature/CodeResources</key>
+		<data>
+		uX6BA+xpEHQbAPTcRxtkx0zYsN8=
+		</data>
+		<key>Frameworks/path_provider_ios.framework/path_provider_ios</key>
+		<data>
+		g/fmV6da+NdSo893HUyJf44fsyE=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		Jhm45JuF2hE7dBM0mDMRNjufFh0=
+		Ah7wLe/dROyRMVfAtg3XJJn93Eg=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -261,7 +285,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			USYJEIad9nlxjOEdpJfMvBZltomQZqaNh8WrazQ728Q=
+			UuL3tX6Yso2K/R+o1YBbF2JpRDswaJwPyU+WwhjeHMY=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -275,7 +299,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			zMQIQtgZtWD3CI7RLIbjeBDhrP4l78hKgIREUFw/Tes=
+			mwSKKmIEMOa1+AUsvBpVoz/TXEqfTlduCmuIA8AzBsE=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
@@ -296,7 +320,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yQo7lWKSjYRIA7kisJfGwHXiYDN2nuXHT6PTq/Tc86U=
+			Lyrrbag3SyVNFl4IF/hAxjmqDLMfdSmXuEMlMjyLBCU=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/fonts/MaterialIcons-Regular.otf</key>
@@ -317,7 +341,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			wRTxzLkSLHJitfHkynDmo9SLvvptu3JpruK2wWKBPQQ=
+			o0IP7p8aueP5HgoH2GkJKYD2WR/cy4l5rNJF5Xv2hR8=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -486,6 +510,48 @@
 			<key>hash2</key>
 			<data>
 			sA+D9pONLsc1rI+XDHefj/KAY7kac9Ait6lUu4UjHDg=
+			</data>
+		</dict>
+		<key>Frameworks/camera_avfoundation.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0yrCm/T+6lM0IvniGsguB6oj+3rqdsE/XttAnSUG55k=
+			</data>
+		</dict>
+		<key>Frameworks/camera_avfoundation.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CrURMPgI4k0xsErvd211sh/iQXqLwI808EHriCHItVc=
+			</data>
+		</dict>
+		<key>Frameworks/camera_avfoundation.framework/camera_avfoundation</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LZYCd4/WHgf25FJkex0X2y/KGB/3UpzPB3S89AZIrvM=
+			</data>
+		</dict>
+		<key>Frameworks/path_provider_ios.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EzWUisEE6FNihu9cM7YkJCcvSp/Rc3Hv/Hsg/QO6eA4=
+			</data>
+		</dict>
+		<key>Frameworks/path_provider_ios.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			K2pk9dvGlymWjeFHheAlvbVtYc38YyzPH0Ki7pyNJPU=
+			</data>
+		</dict>
+		<key>Frameworks/path_provider_ios.framework/path_provider_ios</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yLyjHW6zjzi0RfFUVVagNckFX7vi41ST4OOobubkh1s=
 			</data>
 		</dict>
 	</dict>
