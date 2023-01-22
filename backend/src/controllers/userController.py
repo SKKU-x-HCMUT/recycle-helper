@@ -2,15 +2,8 @@
 from flask import request, jsonify, session, redirect, url_for
 from src.models.User import User
 from src.config.firestore.db import db
-from firebase_admin import auth
-import pyrebase
-import json
+from src.config.auth.auth import pbAuth
 from functools import wraps
-
-pb = pyrebase.initialize_app(json.load(open('src/config/auth/credentials.json')))
-pbAuth = pb.auth()
-
-
 
 class UserController:
     def login_required(f):
@@ -40,6 +33,7 @@ class UserController:
         """
         try:
             # get information from request
+            userId = localId
             name = request.json.get('name')
             sex = request.json.get('sex')
             nationality = request.json.get('nationality')
@@ -53,13 +47,73 @@ class UserController:
                 return f"An Error Occured: Cannot find user with localId {localId}", 500
 
             # create user model
-            userObject = User(email=user_info['email'], name=name, dob=dob, sex=sex, nationality=nationality, phone_number=phone_number, point=user_info['point'])
+            userObject = User(userId=userId, email=user_info['email'], name=name, dob=dob, sex=sex, nationality=nationality, phone_number=phone_number, points=user_info['points'])
+
             db.collection('users').document(localId).update(userObject.to_dict())
 
             updatedUser = user_ref.get().to_dict()
             return jsonify(updatedUser), 200
         except Exception as e:
             return f"An Error Occured: {e}", 500
+
+    @login_required
+    def achieve_reward():
+        """
+            When the user click on achieve a reward in a rewards page
+        """
+        try:
+            rewardId = request.json.get("rewardId")
+            localId = request.json.get("localId")
+
+            reward = db.collection('rewards').document(rewardId).get().to_dict()
+            user = db.collection("users").document(localId).get().to_dict()
+
+            # check reward's points_exchange and user's points
+            if user["points"] < reward["pointsExchange"]:
+                return {"message": "Not having enough points to achieve reward"}, 500
+
+            # check how many rewards and vouchers of the same type that the user had
+            ## check number of rewards
+            update_rewards = {
+                    f"{rewardId}": {
+                        "rewardId": f"{rewardId}",
+                        "pointsExchange": reward['pointsExchange'],
+                        "quantity": 1
+                    }
+                }
+            if 'rewards' in user:
+                if f'{rewardId}' in user['rewards']:
+                    user['rewards'][f'{rewardId}']['quantity'] += 1
+                update_rewards.update(user["rewards"])
+
+            ## update points after achieving rewards
+            update_points = user["points"] - reward["pointsExchange"]
+
+            ## check number of vouchers
+            update_vouchers = reward["vouchers"]
+            if 'vouchers' in user and 'vouchers' in reward:
+                for voucherId in reward["vouchers"]:
+                    if voucherId in user["vouchers"]:
+                        user["vouchers"][f"{voucherId}"]["quantity"] += 1
+                update_vouchers.update(user["vouchers"])
+
+
+            # update user's document with reward and corresponding vouchers
+            updateObject = {
+                "rewards": update_rewards,
+                "vouchers": update_vouchers,
+                "points": update_points
+            }
+            
+            print(updateObject)
+
+            # update user's document
+            db.collection('users').document(localId).update(updateObject)
+            user = db.collection("users").document(localId).get().to_dict()
+
+            return jsonify(user), 200
+        except Exception as e:
+            return { "message": f"An Error Occured: {e}" }, 500
 
     # Authentication functions
     def register():
@@ -76,7 +130,7 @@ class UserController:
             user = pbAuth.create_user_with_email_and_password(email, password)
 
             # create user on firestore
-            db.collection('users').document(user['localId']).set({"email": user['email'], "point": 0})
+            db.collection('users').document(user['localId']).set({"userId": user['localId'], "email": user['email'], "points": 0})
             return {'message': f'Successfully created user {user["email"]}'}, 200
         except Exception as e:
             return {'message': f'Error creating user: {e}'},400
