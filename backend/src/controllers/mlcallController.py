@@ -22,6 +22,6 @@ class MlcallController:
         return decorated_function
 
     @login_required
-    def predict_image_classification_sample(rewardId):
+    def predict(rewardId):
         # call api from gg cloud with predict_image_classification_sample
         pass
