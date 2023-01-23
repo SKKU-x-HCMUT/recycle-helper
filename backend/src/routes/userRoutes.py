@@ -16,3 +16,9 @@ userRouter.route("/logout", methods=['GET'])(UserController.logout)
 
 # achieve reward -> exchange points for reward
 userRouter.route("/user/achieve-reward", methods=['POST'])(UserController.achieve_reward)
+
+# get user's rewards
+userRouter.route("/user/<localId>/rewards", methods=['GET'])(UserController.get_rewards)
+
+# get user's vouchers
+userRouter.route("/user/<localId>/vouchers", methods=['GET'])(UserController.get_vouchers)

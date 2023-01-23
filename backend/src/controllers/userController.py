@@ -115,6 +115,26 @@ class UserController:
         except Exception as e:
             return { "message": f"An Error Occured: {e}" }, 500
 
+    @login_required
+    def get_rewards(localId):
+        try:
+            user = db.collection('users').document(localId).get().to_dict()
+            if 'rewards' not in user:
+                return { }, 200
+            return jsonify(user['rewards']), 200
+        except Exception as e:
+            return { "message": f"An Error Occured: {e}" }, 500
+
+    @login_required
+    def get_vouchers(localId):
+        try:
+            user = db.collection('users').document(localId).get().to_dict()
+            if 'vouchers' not in user:
+                return { }, 200
+            return jsonify(user['vouchers']), 200
+        except Exception as e:
+            return { "message": f"An Error Occured: {e}" }, 500
+
     # Authentication functions
     def register():
         """

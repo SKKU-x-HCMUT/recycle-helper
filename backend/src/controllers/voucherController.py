@@ -1,9 +1,9 @@
 from flask import request, jsonify, session, redirect, url_for
-from src.models.Reward import Reward
+from src.models.Voucher import Voucher
 from src.config.firestore.db import db
 from functools import wraps
 
-class RewardController:
+class VoucherController:
     def login_required(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -14,9 +14,9 @@ class RewardController:
         return decorated_function
 
     @login_required
-    def get_reward(rewardId):
+    def get_voucher(voucherId):
         try:
-            reward = db.collection('rewards').document(rewardId).get()
-            return jsonify(reward.to_dict()), 200
+            voucher = db.collection('vouchers').document(voucherId).get()
+            return jsonify(voucher.to_dict()), 200
         except Exception as e:
             return f"An Error Occured: {e}", 500
