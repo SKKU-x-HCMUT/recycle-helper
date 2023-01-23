@@ -4,4 +4,4 @@ from src.controllers.mlcallController import MlcallController
 mlcallRouter = Blueprint("mlcallRouter", __name__)
 
 # post image to classify trash
-mlcallRouter.route("/predict", methods=['POST'])(MlcallController.predict)
+mlcallRouter.route("/predict", methods=['POST'])(MlcallController.predict_image_classification_sample)
