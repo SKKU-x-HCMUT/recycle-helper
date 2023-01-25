@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.camera),
-            label: 'Scan',
+            label: 'Capture',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
