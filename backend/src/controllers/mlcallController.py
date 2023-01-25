@@ -6,8 +6,12 @@ from functools import wraps
 from google.cloud import aiplatform
 from google.cloud.aiplatform.gapic.schema import predict
 from google.protobuf.json_format import MessageToJson
-
-
+import firebase
+from google.cloud import storage
+from google.cloud.storage import client
+import firebase_admin
+from firebase_admin import credentials
+from google.cloud import storage
 
 
 
@@ -26,7 +30,7 @@ class MlcallController:
         project="203585176079",
         endpoint_id="6085264696112316416",
         location="us-central1",
-        filename= "C:/Users/Anh Tu/Documents/recycle-helper/backend/src/cardboard.png",
+        filename= "C:/Users/Anh Tu/Documents/recycle-helper/backend/src/glass.png",
         api_endpoint= "us-central1-aiplatform.googleapis.com",
     ):
         print("In api!!")
@@ -56,6 +60,19 @@ class MlcallController:
         )
         print("response")
         print(" deployed_model_id:", response.deployed_model_id)
+        
+        #uploading images###########################
+
+        # Enable Storage
+        client = storage.Client()
+
+        # Reference an existing bucket.
+        bucket = client.get_bucket('skkuxhcmut-recycle-helper.appspot.com')
+
+        # Upload a local file to a new file to be created in your bucket.
+        zebraBlob = bucket.blob('glass.png')
+        zebraBlob.upload_from_filename(filename='C:/Users/Anh Tu/Documents/recycle-helper/backend/src/glass.png')
+
         # See gs://google-cloud-aiplatform/schema/predict/prediction/image_classification_1.0.0.yaml for the format of the predictions.
         predictions = response.predictions
         predictions_arr = {}
