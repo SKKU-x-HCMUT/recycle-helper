@@ -24,9 +24,9 @@ class MlcallController:
     # @login_required
     def predict_image_classification_sample(
         project="203585176079",
-        endpoint_id="7897400596175519744",
+        endpoint_id="6085264696112316416",
         location="us-central1",
-        filename= "absolute-path\\cardboard.png",
+        filename= "C:/Users/Anh Tu/Documents/recycle-helper/backend/src/cardboard.png",
         api_endpoint= "us-central1-aiplatform.googleapis.com",
     ):
         print("In api!!")
