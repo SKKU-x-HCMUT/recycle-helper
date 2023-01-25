@@ -1,16 +1,10 @@
-import base64, json
-from flask import request, jsonify, session, redirect, url_for
-# from src import cardboard
-from src.config.firestore.db import db
+import base64
+from flask import request, session, redirect, url_for
 from functools import wraps
 from google.cloud import aiplatform
 from google.cloud.aiplatform.gapic.schema import predict
-from google.protobuf.json_format import MessageToJson
-import firebase
 from google.cloud import storage
-from google.cloud.storage import client
-import firebase_admin
-from firebase_admin import credentials
+from time import time 
 from google.cloud import storage
 
 
@@ -25,32 +19,35 @@ class MlcallController:
             return f(*args, **kwargs)
         return decorated_function
 
-    # @login_required
+    @login_required
     def predict_image_classification_sample(
         project="203585176079",
         endpoint_id="6085264696112316416",
         location="us-central1",
-        filename= "C:/Users/Anh Tu/Documents/recycle-helper/backend/src/glass.png",
         api_endpoint= "us-central1-aiplatform.googleapis.com",
     ):
-        print("In api!!")
+        if 'image_file' not in request.files:
+            return {"message": "Missing image file"}, 400
+        
+        # get image file from form's request
+        image_file = request.files['image_file']
+        image_file_content = image_file.stream.read()
+
         # The AI Platform services require regional API endpoints.
         client_options = {"api_endpoint": api_endpoint}
         # Initialize client that will be used to create and send requests.
         # This client only needs to be created once, and can be reused for multiple requests.
         client = aiplatform.gapic.PredictionServiceClient(client_options=client_options)
-        with open(filename, "rb") as f:
-            file_content = f.read()
-
+    
         # The format of each instance should conform to the deployed model's prediction input schema.
-        encoded_content = base64.b64encode(file_content).decode("utf-8")
+        encoded_content = base64.b64encode(image_file_content).decode("utf-8")
         instance = predict.instance.ImageClassificationPredictionInstance(
             content=encoded_content,
         ).to_value()
         instances = [instance]
         # See gs://google-cloud-aiplatform/schema/predict/params/image_classification_1.0.0.yaml for the format of the parameters.
         parameters = predict.params.ImageClassificationPredictionParams(
-            confidence_threshold=0.5, max_predictions=5,
+            confidence_threshold=0.5, max_predictions=1,
         ).to_value()
         endpoint = client.endpoint_path(
             project=project, location=location, endpoint=endpoint_id
@@ -60,7 +57,19 @@ class MlcallController:
         )
         print("response")
         print(" deployed_model_id:", response.deployed_model_id)
+
+        # See gs://google-cloud-aiplatform/schema/predict/prediction/image_classification_1.0.0.yaml for the format of the predictions.
+        predictions = response.predictions
         
+        for prediction in predictions:
+            print(" prediction:", dict(prediction))
+            prediction_confidence = prediction["confidences"][0]
+            prediction_type = prediction["displayNames"][0]
+            prediction_id = prediction["ids"][0]
+            
+        prediction_ret = {"id": prediction_id,"type": prediction_type, "confidence": prediction_confidence}
+
+       
         #uploading images###########################
 
         # Enable Storage
@@ -70,16 +79,9 @@ class MlcallController:
         bucket = client.get_bucket('skkuxhcmut-recycle-helper.appspot.com')
 
         # Upload a local file to a new file to be created in your bucket.
-        zebraBlob = bucket.blob('glass.png')
-        zebraBlob.upload_from_filename(filename='C:/Users/Anh Tu/Documents/recycle-helper/backend/src/glass.png')
+        zebraBlob = bucket.blob(f'unclassified/{session["user"]}_{prediction_type}_{int(time())}')
+        image_file.seek(0)
+        zebraBlob.content_type = image_file.content_type
+        zebraBlob.upload_from_file(file_obj=image_file)
 
-        # See gs://google-cloud-aiplatform/schema/predict/prediction/image_classification_1.0.0.yaml for the format of the predictions.
-        predictions = response.predictions
-        predictions_arr = {}
-        i = 1
-        for prediction in predictions:
-            print(" prediction:", dict(prediction))
-            predictions_arr[f"prediction_{i}"] = dict(prediction)
-            i += 1
-       
-        return {"predictions": predictions_arr}, 200
+        return prediction_ret, 200
