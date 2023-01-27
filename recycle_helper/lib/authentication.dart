@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -11,6 +14,31 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   String? _email, _password;
+
+  Future<void> _login(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      final url = Uri.parse('http://localhost:5000/api/login');
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          'email': _email,
+          'password': _password,
+        }),
+      );
+
+      print(response.body);
+
+      // Show toast when successfully logged in
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Logged in account: \"$_email\"")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               //submit button
               ElevatedButton(
-                onPressed: _login,
+                onPressed: () => _login(context),
                 child: const Text('Login'),
               ),
               TextButton(
@@ -65,18 +93,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      // calling login API goes here
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Logged in account: \"$_email\"")),
-      ); //Show toast when successfully logged in
-    }
-  }
 }
 
 class RegisterPage extends StatefulWidget {
@@ -90,6 +106,31 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
   String? _email, _password;
+
+  Future<void> _register(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      final url = Uri.parse('http://localhost:5000/api/register');
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          'email': _email,
+          'password': _password,
+        }),
+      );
+
+      print(response.body);
+
+      // Show toast when successfully registered
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.body)),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               //submit button
               ElevatedButton(
-                onPressed: _register,
+                onPressed: () => _register(context),
                 child: const Text('Register'),
               ),
             ],
@@ -134,17 +175,5 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
-
-  void _register() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      // calling register API goes here
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Successfully registered: \"$_email\"")),
-      ); //Show toast when successfully logged in
-    }
   }
 }
