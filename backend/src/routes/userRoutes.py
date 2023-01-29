@@ -6,7 +6,7 @@ userRouter = Blueprint("userRouter", __name__)
 
 userRouter.route("/user/<localId>", methods=['GET'])(UserController.get_user)
 
-userRouter.route("/user/update/<localId>", methods=['PUT'])(UserController.update_user)
+userRouter.route("/user/update", methods=['PUT'])(UserController.update_user)
 
 userRouter.route("/register", methods=['POST'])(UserController.register)
 

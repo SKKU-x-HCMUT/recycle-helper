@@ -27,17 +27,17 @@ class UserController:
             return f"An Error Occured: {e}", 500
 
     @login_required
-    def update_user(localId):
+    def update_user():
         """
             Update other profile information: (name, dob, sex, nationality, phone_number)
         """
         try:
             # get information from request
-            userId = localId
+            localId = request.json.get('localId')
             name = request.json.get('name')
             sex = request.json.get('sex')
             nationality = request.json.get('nationality')
-            phone_number = request.json.get('phone_number')
+            phone_number = request.json.get('phoneNumber')
             dob = request.json.get('dob')
 
             # find user in Firestore's "users" collection 
@@ -47,12 +47,12 @@ class UserController:
                 return f"An Error Occured: Cannot find user with localId {localId}", 500
 
             # create user model
-            userObject = User(userId=userId, email=user_info['email'], name=name, dob=dob, sex=sex, nationality=nationality, phone_number=phone_number, points=user_info['points'])
+            user_object = User(userId=localId, email=user_info['email'], name=name, dob=dob, sex=sex, nationality=nationality, phone_number=phone_number, points=user_info['points'])
 
-            db.collection('users').document(localId).update(userObject.to_dict())
+            db.collection('users').document(localId).update(user_object.to_dict())
 
-            updatedUser = user_ref.get().to_dict()
-            return jsonify(updatedUser), 200
+            updated_user = user_ref.get().to_dict()
+            return jsonify(updated_user), 200
         except Exception as e:
             return f"An Error Occured: {e}", 500
 
