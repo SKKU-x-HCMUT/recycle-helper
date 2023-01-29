@@ -36,6 +36,9 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Logged in account: \"$_email\"")),
         );
+
+        // go to Mainpage without back
+        Navigator.pushReplacementNamed(context, '/main');
       }
     }
   }
@@ -81,9 +84,10 @@ class _LoginPageState extends State<LoginPage> {
               TextButton(
                 onPressed: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterPage()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterPage()),
+                  );
                 },
                 child: const Text('Register'),
               ),
@@ -126,8 +130,9 @@ class _RegisterPageState extends State<RegisterPage> {
       // Show toast when successfully registered
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.body)),
+          SnackBar(content: Text(response.body)), // TODO: should be changed
         );
+        Navigator.pop(context);
       }
     }
   }
