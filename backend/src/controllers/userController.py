@@ -169,7 +169,7 @@ class UserController:
             session['user'] = user['localId']
             return {'idToken': id_token, 'refreshToken': refreshToken, 'localId': user['localId']}, 200
         except Exception as e:
-            return {'message': f'There was an error logging in: {e}'}, 500
+            return {'message': f'There was an error logging in: {e}'}, 400
 
     def logout():
         if 'user' in session:
