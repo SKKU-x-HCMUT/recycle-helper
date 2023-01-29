@@ -20,3 +20,12 @@ class RewardController:
             return jsonify(reward.to_dict()), 200
         except Exception as e:
             return f"An Error Occured: {e}", 500
+
+    @login_required
+    def get_all_rewards():
+        try:
+            rewards_stream = db.collection('rewards').stream()
+            all_rewards = [reward.to_dict() for reward in rewards_stream]
+            return jsonify(all_rewards), 200
+        except Exception as e:
+            return f"An Error Occured: {e}", 500

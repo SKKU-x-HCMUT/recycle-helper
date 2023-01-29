@@ -20,3 +20,12 @@ class VoucherController:
             return jsonify(voucher.to_dict()), 200
         except Exception as e:
             return f"An Error Occured: {e}", 500
+
+    @login_required
+    def get_all_vouchers():
+        try:
+            vouchers_stream = db.collection('vouchers').stream()
+            all_vouchers = [voucher.to_dict() for voucher in vouchers_stream]
+            return jsonify(all_vouchers), 200
+        except Exception as e:
+            return f"An Error Occured: {e}", 500
