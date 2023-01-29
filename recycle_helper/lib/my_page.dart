@@ -12,7 +12,7 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   Future<String> _getUserInfo() async {
-    final url = Uri.parse('http://localhost:5000/api/users');
+    final url = Uri.parse('http://localhost:5000/api/user/');
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -45,8 +45,13 @@ class _MyPageState extends State<MyPage> {
     return FutureBuilder<String>(
       future: _getUserInfo(),
       builder: (context, snapshot) {
+        String rawData = "";
+        if (snapshot.hasData) {
+          rawData = snapshot.data!;
+        }
         return Column(
           children: [
+            Text(rawData),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
