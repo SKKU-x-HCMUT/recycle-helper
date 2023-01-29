@@ -153,7 +153,7 @@ class UserController:
             db.collection('users').document(user['localId']).set({"userId": user['localId'], "email": user['email'], "points": 0})
             return {'message': f'Successfully created user {user["email"]}'}, 200
         except Exception as e:
-            return {'message': f'Error creating user: {e}'},400
+            return {'message': f'Error creating user: {e}'}, 500
 
     def login():
         """
