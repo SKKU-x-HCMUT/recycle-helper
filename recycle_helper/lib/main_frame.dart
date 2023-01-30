@@ -16,7 +16,7 @@ class _MainFrameState extends State<MainFrame> {
   int _selectedPageIndex = 1;
 
   List<Widget> _getPages() => <Widget>[
-        VoucherPage(session: widget.session),
+        RewardPage(session: widget.session),
         CameraLoader(session: widget.session),
         MyPage(session: widget.session),
       ];
@@ -34,7 +34,7 @@ class _MainFrameState extends State<MainFrame> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.shop),
-            label: 'Voucher Shop',
+            label: 'Reward Shop',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.camera),
