@@ -103,58 +103,92 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
     };
   }
 
+  Future<void> _achieveReward() async {
+    final response = await widget.session.post(
+        "http://$addr/api/user/achieve-reward",
+        json.encode({
+          "rewardId": widget.rewardId,
+          "localId": widget.session.localId,
+        }));
+
+    // final decodedResponse = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("You achieved the reward!")),
+        );
+        Navigator.pop(context);
+      }
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error")),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Reward Detail')),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FutureBuilder<Map<String, dynamic>>(
-            future: _getRewardInfo(widget.rewardId),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<Widget> detailTiles = [];
+      appBar: AppBar(title: const Text('Reward Detail')),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FutureBuilder<Map<String, dynamic>>(
+          future: _getRewardInfo(widget.rewardId),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<Widget> detailTiles = [];
 
-                Map<String, dynamic> rewardInfo = snapshot.data!;
+              Map<String, dynamic> rewardInfo = snapshot.data!;
 
-                //name
-                detailTiles.add(Card(
-                  child: ListTile(
-                    leading: const Text("Name"),
-                    title: Text(rewardInfo['name']),
-                  ),
-                ));
+              //name
+              detailTiles.add(Card(
+                child: ListTile(
+                  leading: const Text("Name"),
+                  title: Text(rewardInfo['name']),
+                ),
+              ));
 
-                //points
-                detailTiles.add(Card(
-                  child: ListTile(
-                    leading: const Text("Required Points"),
-                    title: Text(rewardInfo['pointsExchange'].toString()),
-                  ),
-                ));
+              //points
+              detailTiles.add(Card(
+                child: ListTile(
+                  leading: const Text("Required Points"),
+                  title: Text(rewardInfo['pointsExchange'].toString()),
+                ),
+              ));
 
-                //divider
-                detailTiles.add(const Text("Vouchers"));
+              //divider
+              detailTiles.add(const ListTile(title: Text("Included Vouchers")));
 
-                //vouchers
-                List<Map> vouchers = rewardInfo['vouchers'];
-                for (final voucher in vouchers) {
-                  detailTiles.add(
-                    Card(
-                      child: ListTile(
-                        title: Text(voucher['storeName']),
-                        subtitle: Text(voucher['name']),
-                      ),
+              //vouchers
+              List<Map> vouchers = rewardInfo['vouchers'];
+              for (final voucher in vouchers) {
+                detailTiles.add(
+                  Card(
+                    child: ListTile(
+                      title: Text(voucher['storeName']),
+                      subtitle: Text(voucher['name']),
                     ),
-                  );
-                }
-                return Column(children: detailTiles);
-              } else {
-                return const Text("Reward Detail loading...");
+                  ),
+                );
               }
-            },
-          ),
-        ));
+              return Column(
+                  children: detailTiles +
+                      [
+                        ElevatedButton(
+                          onPressed: () => _achieveReward(),
+                          child: const Text('Achieve Reward'),
+                        ),
+                      ]);
+            } else {
+              return const Text("Reward Detail loading...");
+            }
+          },
+        ),
+      ),
+    );
   }
 }
 

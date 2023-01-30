@@ -177,7 +177,7 @@ class CaptureResultScreen extends StatelessWidget {
     required this.imagePath,
   });
 
-  Future<String?> _getResult() async {
+  Future<String?> _getPredictionResult() async {
     final http.StreamedResponse response;
     try {
       response =
@@ -190,7 +190,7 @@ class CaptureResultScreen extends StatelessWidget {
         final responseBytes = await response.stream.toBytes();
         final responseBody = utf8.decode(responseBytes);
         print(responseBody);
-        throw Exception('_getUserInfo() failed');
+        throw Exception('_getPredictionResult() failed');
       }
     } catch (e) {
       print(e);
@@ -205,18 +205,38 @@ class CaptureResultScreen extends StatelessWidget {
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
       body: FutureBuilder<String?>(
-        future: _getResult(),
+        future: _getPredictionResult(),
         builder: (context, snapshot) {
-          String result = "Loading prediction result...";
           if (snapshot.hasData) {
-            result = snapshot.data!;
+            final predictionResult = json.decode(snapshot.data!);
+
+            return Column(
+              children: [
+                Image.file(File(imagePath)),
+                Text(
+                  predictionResult["type"].toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "${(predictionResult["confidence"] * 100).round()}%",
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                Image.file(File(imagePath)),
+                const Text("Loading prediction result..."),
+              ],
+            );
           }
-          return Column(
-            children: [
-              Image.file(File(imagePath)),
-              Text(result),
-            ],
-          );
         },
       ),
       //Image.file(),
