@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recycle_helper/capture_page.dart';
-import 'package:recycle_helper/voucher_page.dart';
+import 'package:recycle_helper/reward_page.dart';
 import 'package:recycle_helper/my_page.dart';
 import 'package:recycle_helper/session.dart';
 
