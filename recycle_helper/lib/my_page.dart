@@ -2,56 +2,65 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:recycle_helper/auth_page.dart';
+import 'package:recycle_helper/session.dart';
+
+const String addr = "172.30.1.82:5000";
 
 class MyPage extends StatefulWidget {
-  const MyPage({super.key});
+  final Session session;
+  const MyPage({Key? key, required this.session}) : super(key: key);
 
   @override
   State<MyPage> createState() => _MyPageState();
 }
 
 class _MyPageState extends State<MyPage> {
-  Future<String> _getUserInfo() async {
-    final url = Uri.parse('http://localhost:5000/api/user/');
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({}),
-    );
-    return response.body;
+  Future<http.Response?> _getUserInfo() async {
+    final http.Response response;
+    try {
+      response = await widget.session
+          .get('http://$addr/api/user/${widget.session.localId}');
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw Exception('_getUserInfo() failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 
   Future<void> _logout(BuildContext context) async {
-    final url = Uri.parse('http://localhost:5000/api/logout');
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({}),
-    );
+    final response = await widget.session.get("http://$addr/api/logout");
+    final decodedResponse = json.decode(response.body);
 
-    // Show toast
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response.body)),
+        SnackBar(content: Text(decodedResponse['message'])),
       );
 
       // go to Loginpage without back
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
+    return FutureBuilder<http.Response?>(
       future: _getUserInfo(),
       builder: (context, snapshot) {
-        String rawData = "";
+        String info = "Loading user info...";
         if (snapshot.hasData) {
-          rawData = snapshot.data!;
+          info = snapshot.data!.body;
         }
         return Column(
           children: [
-            Text(rawData),
+            Text(info),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,

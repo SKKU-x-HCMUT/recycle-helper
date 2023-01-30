@@ -2,30 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:recycle_helper/capture_page.dart';
 import 'package:recycle_helper/voucher_page.dart';
 import 'package:recycle_helper/my_page.dart';
+import 'package:recycle_helper/session.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class MainFrame extends StatefulWidget {
+  final Session session;
+  const MainFrame({Key? key, required this.session}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<MainFrame> createState() => _MainFrameState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainFrameState extends State<MainFrame> {
   int _selectedPageIndex = 1;
 
-  static const List<Widget> _pages = <Widget>[
-    VoucherPage(),
-    CameraLoader(),
-    MyPage(),
-  ];
+  List<Widget> _getPages() => <Widget>[
+        VoucherPage(session: widget.session),
+        CameraLoader(session: widget.session),
+        MyPage(session: widget.session),
+      ];
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = _getPages();
     return Scaffold(
       appBar: AppBar(title: const Text('Main')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(child: _pages.elementAt(_selectedPageIndex)),
+        child: Center(child: pages.elementAt(_selectedPageIndex)),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

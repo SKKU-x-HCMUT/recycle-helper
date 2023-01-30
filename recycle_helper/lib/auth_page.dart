@@ -2,6 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:recycle_helper/main_frame.dart';
+import 'package:recycle_helper/session.dart';
+
+const String addr = "172.30.1.82:5000";
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -19,26 +23,38 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final url = Uri.parse('http://localhost:5000/api/login');
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({
-          'email': _email,
-          'password': _password,
-        }),
-      );
-
-      print(response.body);
-
-      // Show toast when successfully logged in
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Logged in account: \"$_email\"")),
+      Session session = Session();
+      try {
+        final response = await session.post(
+          "http://$addr/api/login",
+          json.encode({
+            'email': _email,
+            'password': _password,
+          }),
         );
 
-        // go to Mainpage without back
-        Navigator.pushReplacementNamed(context, '/main');
+        if (response.statusCode == 200) {
+          session.updateCookie(response);
+          final decodedResponse = json.decode(response.body);
+          session.localId = decodedResponse['localId'];
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Logged in account: \"$_email\"")),
+            );
+
+            // go to Mainpage without back
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MainFrame(session: session)),
+            );
+          }
+        } else {
+          throw Exception('Login failed');
+        }
+      } catch (e) {
+        print(e);
       }
     }
   }
@@ -115,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final url = Uri.parse('http://localhost:5000/api/register');
+      final url = Uri.parse('http://$addr/api/register');
       final response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
@@ -125,14 +141,21 @@ class _RegisterPageState extends State<RegisterPage> {
         }),
       );
 
-      print(response.body);
+      final decodedResponse = json.decode(response.body);
 
-      // Show toast when successfully registered
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.body)), // TODO: should be changed
-        );
-        Navigator.pop(context);
+      if (response.statusCode == 200) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(decodedResponse['message'])),
+          );
+          Navigator.pop(context);
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Error creating user")),
+          );
+        }
       }
     }
   }
