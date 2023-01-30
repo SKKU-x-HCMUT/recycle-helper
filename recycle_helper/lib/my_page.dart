@@ -54,23 +54,35 @@ class _MyPageState extends State<MyPage> {
     return FutureBuilder<http.Response?>(
       future: _getUserInfo(),
       builder: (context, snapshot) {
-        String info = "Loading user info...";
         if (snapshot.hasData) {
-          info = snapshot.data!.body;
-        }
-        return Column(
-          children: [
-            Text(info),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
+          List<Widget> infoTiles = [];
+          String rawData = snapshot.data!.body;
+          Map decodedData = json.decode(rawData);
+          decodedData.forEach((key, value) {
+            infoTiles.add(Card(
+              child: ListTile(
+                leading: Text(key.toString()),
+                title: Text(value.toString()),
               ),
-              onPressed: () => _logout(context),
-              child: const Text('Logout'),
-            ),
-          ],
-        );
+            ));
+          });
+
+          return Column(
+            children: infoTiles +
+                [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () => _logout(context),
+                    child: const Text('Logout'),
+                  ),
+                ],
+          );
+        }
+
+        return const Text("Loading user info...");
       },
     );
   }
