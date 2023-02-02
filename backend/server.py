@@ -13,6 +13,10 @@ app.register_blueprint(rewardRoutes.rewardRouter, url_prefix = "/api")
 app.register_blueprint(voucherRoutes.voucherRouter, url_prefix = "/api")
 app.register_blueprint(mlcallRoutes.mlcallRouter, url_prefix = "/api")
 
-port = int(os.environ.get('PORT', 5000))
+@app.route("/")
+def deploy():
+    return "Successfully deployed"
+
+
 if __name__ == '__main__':
-    app.run(threaded=True, host='0.0.0.0', port=port)
+    app.run(threaded=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
