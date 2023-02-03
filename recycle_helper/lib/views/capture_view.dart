@@ -187,7 +187,7 @@ class PreviewScreenState extends State<PreviewScreen> {
 }
 
 // A widget that displays the picture taken by the user.
-class CaptureResultScreen extends StatelessWidget {
+class CaptureResultScreen extends StatefulWidget {
   final Session session;
   final String imagePath;
   const CaptureResultScreen({
@@ -196,10 +196,16 @@ class CaptureResultScreen extends StatelessWidget {
     required this.imagePath,
   });
 
+  @override
+  State<CaptureResultScreen> createState() => _CaptureResultScreenState();
+}
+
+class _CaptureResultScreenState extends State<CaptureResultScreen> {
   Future<String?> _getPredictionResult() async {
     final http.StreamedResponse response;
     try {
-      response = await session.multipartRequest('$addr/api/predict', imagePath);
+      response = await widget.session
+          .multipartRequest('$addr/api/predict', widget.imagePath);
       if (response.statusCode == 200) {
         final responseBytes = await response.stream.toBytes();
         final responseBody = utf8.decode(responseBytes);
@@ -222,15 +228,24 @@ class CaptureResultScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Result')),
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
-      body: FutureBuilder<String?>(
-        future: _getPredictionResult(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
+      body: SingleChildScrollView(
+        child: FutureBuilder<String?>(
+          future: _getPredictionResult(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Column(
+                children: [
+                  Image.file(File(widget.imagePath)),
+                  const Text("Loading prediction result..."),
+                ],
+              );
+            }
+
             final predictionResult = json.decode(snapshot.data!);
 
             return Column(
               children: [
-                Image.file(File(imagePath)),
+                Image.file(File(widget.imagePath)),
                 Text(
                   predictionResult["type"].toUpperCase(),
                   style: const TextStyle(
@@ -245,17 +260,11 @@ class CaptureResultScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const Text("Congratulations! You earned 5 points!"),
               ],
             );
-          } else {
-            return Column(
-              children: [
-                Image.file(File(imagePath)),
-                const Text("Loading prediction result..."),
-              ],
-            );
-          }
-        },
+          },
+        ),
       ),
       //Image.file(),
     );
