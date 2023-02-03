@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:recycle_helper/screens/auth.dart';
+import 'package:recycle_helper/views/login_view.dart';
 
 void main() {
   runApp(const MyApp());

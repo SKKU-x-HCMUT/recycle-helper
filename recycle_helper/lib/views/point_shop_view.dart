@@ -15,8 +15,8 @@ class PointShopPage extends StatefulWidget {
 class _PointShopPageState extends State<PointShopPage> {
   Future<List<dynamic>> _getRewards() async {
     final response = await widget.session.get("$addr/api/rewards");
-    List<dynamic> vouchers = json.decode(response.body);
-    return vouchers;
+    List<dynamic> rewards = json.decode(response.body);
+    return rewards;
   }
 
   @override
@@ -106,8 +106,6 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
           "localId": widget.session.localId,
         }));
 
-    // final decodedResponse = json.decode(response.body);
-
     if (response.statusCode == 200) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -133,53 +131,52 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
         child: FutureBuilder<Map<String, dynamic>>(
           future: _getRewardInfo(widget.rewardId),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<Widget> detailTiles = [];
-
-              Map<String, dynamic> rewardInfo = snapshot.data!;
-
-              //name
-              detailTiles.add(Card(
-                child: ListTile(
-                  leading: const Text("Name"),
-                  title: Text(rewardInfo['name']),
-                ),
-              ));
-
-              //points
-              detailTiles.add(Card(
-                child: ListTile(
-                  leading: const Text("Required Points"),
-                  title: Text(rewardInfo['pointsExchange'].toString()),
-                ),
-              ));
-
-              //divider
-              detailTiles.add(const ListTile(title: Text("Included Vouchers")));
-
-              //vouchers
-              List<Map> vouchers = rewardInfo['vouchers'];
-              for (final voucher in vouchers) {
-                detailTiles.add(
-                  Card(
-                    child: ListTile(
-                      title: Text(voucher['storeName']),
-                      subtitle: Text(voucher['name']),
-                    ),
-                  ),
-                );
-              }
-              return Column(
-                  children: detailTiles +
-                      [
-                        ElevatedButton(
-                          onPressed: () => _achieveReward(),
-                          child: const Text('Achieve Reward'),
-                        ),
-                      ]);
-            } else {
+            if (!snapshot.hasData) {
               return const Text("Reward Detail loading...");
             }
+
+            Map<String, dynamic> rewardInfo = snapshot.data!;
+            List<Widget> detailTiles = [];
+
+            //name
+            detailTiles.add(Card(
+              child: ListTile(
+                leading: const Text("Name"),
+                title: Text(rewardInfo['name']),
+              ),
+            ));
+
+            //points
+            detailTiles.add(Card(
+              child: ListTile(
+                leading: const Text("Required Points"),
+                title: Text(rewardInfo['pointsExchange'].toString()),
+              ),
+            ));
+
+            //divider
+            detailTiles.add(const ListTile(title: Text("Included Vouchers")));
+
+            //vouchers
+            List<Map> vouchers = rewardInfo['vouchers'];
+            for (final voucher in vouchers) {
+              detailTiles.add(
+                Card(
+                  child: ListTile(
+                    title: Text(voucher['storeName']),
+                    subtitle: Text(voucher['name']),
+                  ),
+                ),
+              );
+            }
+            return Column(
+                children: detailTiles +
+                    [
+                      ElevatedButton(
+                        onPressed: () => _achieveReward(),
+                        child: const Text('Achieve Reward'),
+                      ),
+                    ]);
           },
         ),
       ),

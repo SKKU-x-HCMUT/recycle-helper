@@ -34,8 +34,6 @@ class _UserPageState extends State<UserPage> {
     return null;
   }
 
-  Future<http.Response?> _getUserVouchers() async {}
-
   Future<void> _logout(BuildContext context) async {
     final response = await widget.session.get("$addr/api/logout");
     final decodedResponse = json.decode(response.body);
@@ -102,7 +100,7 @@ class _UserPageState extends State<UserPage> {
               userVoucherTiles.add(Card(
                 child: ListTile(
                   title: Text(value["storeName"]),
-                  subtitle: Text("desciption of Voucher 1"),
+                  //subtitle: Text("desciption of Voucher"),
                 ),
               ));
             }
