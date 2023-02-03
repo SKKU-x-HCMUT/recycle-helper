@@ -97,17 +97,16 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
               ),
               //submit button
-              FilledButton(
-                child: const Text('Login'),
+              ElevatedButton(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Logging in...")),
                   );
                   _login(context);
                 },
+                child: const Text('Login'),
               ),
-              FilledButton.tonal(
-                child: const Text('Register'),
+              OutlinedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -115,6 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (context) => const RegisterPage()),
                   );
                 },
+                child: const Text('Register'),
               ),
             ],
           ),

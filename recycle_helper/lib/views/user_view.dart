@@ -110,8 +110,8 @@ class _UserPageState extends State<UserPage> {
         List<Widget> children = userInfoTiles +
             userVoucherTiles +
             [
-              FilledButton(
-                style: FilledButton.styleFrom(
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                 ),
