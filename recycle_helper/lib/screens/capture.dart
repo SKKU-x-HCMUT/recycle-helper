@@ -7,63 +7,63 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:recycle_helper/session.dart';
-import 'package:recycle_helper/constraints.dart';
+import 'package:recycle_helper/constants.dart';
 
-class CameraLoader extends StatefulWidget {
+// 1. CameraPermissionChecker first check for the permission
+class CameraPermissionChecker extends StatefulWidget {
   final Session session;
-  const CameraLoader({Key? key, required this.session}) : super(key: key);
+  const CameraPermissionChecker({Key? key, required this.session})
+      : super(key: key);
   @override
-  State<CameraLoader> createState() => _CameraLoaderState();
+  State<CameraPermissionChecker> createState() =>
+      _CameraPermissionCheckerState();
 }
 
-class _CameraLoaderState extends State<CameraLoader> {
+class _CameraPermissionCheckerState extends State<CameraPermissionChecker> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<PermissionStatus>(
       future: Permission.camera.request(),
       builder: (context, snapshot) {
-        Widget child = const Text('Waiting for camera permission...');
         if (snapshot.hasData) {
           PermissionStatus? status = snapshot.data;
           if (status == null) {
-            child = const Text('Error while acquiring camera permission.');
-          } else {
-            if (status.isGranted) {
-              child = FutureBuilder<List<CameraDescription>>(
-                future: availableCameras(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data == null) {
-                      return const Text('Camera permission denied.');
-                    } else {
-                      if (snapshot.data!.isEmpty) {
-                        return const Text('No camera available.');
-                      } else {
-                        return CameraScreen(
-                          session: widget.session,
-                          camera: snapshot.data!.first,
-                        );
-                      }
-                    }
+            return const Text('Error while acquiring camera permission.');
+          }
+          if (status.isDenied) {
+            return const Text('Camera permission denied.');
+          }
+          if (status.isPermanentlyDenied) {
+            return const Text(
+                'Camera permission permanently denied. Please allow Camera permission through Settings.');
+          }
+          if (status.isGranted) {
+            return FutureBuilder<List<CameraDescription>>(
+              future: availableCameras(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == null) {
+                    return const Text('Camera permission denied.');
                   } else {
-                    return const Text('Searching for available cameras...');
+                    if (snapshot.data!.isEmpty) {
+                      return const Text('No camera available.');
+                    } else {
+                      return CameraScreen(
+                        session: widget.session,
+                        camera: snapshot.data!.first,
+                      );
+                    }
                   }
-                },
-              );
-            } else if (status.isDenied) {
-              child = const Text('Camera permission denied.');
-            } else if (status.isPermanentlyDenied) {
-              child = const Text(
-                  'Camera permission permanently denied. Please allow Camera permission through Settings.');
-            }
+                } else {
+                  return const Text('Searching for available cameras...');
+                }
+              },
+            );
           }
         } else if (snapshot.hasError) {
-          child = Text('Error: ${snapshot.error}');
-        } else {
-          //waiting for the result
-          child = const Text('Waiting for user\'s permission...');
+          return Text('Error: ${snapshot.error}');
         }
-        return child;
+        return const Text('Checking camera permission...');
       },
     );
   }

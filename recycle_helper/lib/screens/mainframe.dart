@@ -21,7 +21,7 @@ class _MainFrameState extends State<MainFrame> {
 
     final List<Widget> pages = <Widget>[
       RewardPage(session: widget.session),
-      CameraLoader(session: widget.session),
+      CameraPermissionChecker(session: widget.session),
       MyPage(session: widget.session),
     ];
 

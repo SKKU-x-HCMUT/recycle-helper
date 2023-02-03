@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:recycle_helper/screens/auth.dart';
 import 'package:recycle_helper/session.dart';
-import 'package:recycle_helper/constraints.dart';
+import 'package:recycle_helper/constants.dart';
 
 class MyPage extends StatefulWidget {
   final Session session;

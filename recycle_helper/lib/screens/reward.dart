@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:recycle_helper/session.dart';
-import 'package:recycle_helper/constraints.dart';
+import 'package:recycle_helper/constants.dart';
 
 class RewardPage extends StatefulWidget {
   final Session session;
