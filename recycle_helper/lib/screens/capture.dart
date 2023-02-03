@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:recycle_helper/session.dart';
-
-const String addr = "172.30.1.82:5000";
+import 'package:recycle_helper/constraints.dart';
 
 class CameraLoader extends StatefulWidget {
   final Session session;
@@ -180,8 +179,7 @@ class CaptureResultScreen extends StatelessWidget {
   Future<String?> _getPredictionResult() async {
     final http.StreamedResponse response;
     try {
-      response =
-          await session.uploadPhoto('http://$addr/api/predict', imagePath);
+      response = await session.multipartRequest('$addr/api/predict', imagePath);
       if (response.statusCode == 200) {
         final responseBytes = await response.stream.toBytes();
         final responseBody = utf8.decode(responseBytes);

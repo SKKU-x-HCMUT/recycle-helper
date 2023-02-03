@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recycle_helper/auth_page.dart';
+import 'package:recycle_helper/screens/auth.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:recycle_helper/session.dart';
-
-const String addr = "172.30.1.82:5000";
+import 'package:recycle_helper/constraints.dart';
 
 class RewardPage extends StatefulWidget {
   final Session session;
@@ -15,7 +13,7 @@ class RewardPage extends StatefulWidget {
 
 class _RewardPageState extends State<RewardPage> {
   Future<List<dynamic>> _getRewards() async {
-    final response = await widget.session.get("http://$addr/api/rewards");
+    final response = await widget.session.get("$addr/api/rewards");
     List<dynamic> vouchers = json.decode(response.body);
     return vouchers;
   }
@@ -72,14 +70,12 @@ class RewardDetailPage extends StatefulWidget {
 
 class _RewardDetailPageState extends State<RewardDetailPage> {
   Future<dynamic> _getVoucher(String voucherId) async {
-    final response =
-        await widget.session.get("http://$addr/api/voucher/$voucherId");
+    final response = await widget.session.get("$addr/api/voucher/$voucherId");
     return json.decode(response.body);
   }
 
   Future<Map<String, dynamic>> _getRewardInfo(String rewardId) async {
-    final response =
-        await widget.session.get("http://$addr/api/reward/$rewardId");
+    final response = await widget.session.get("$addr/api/reward/$rewardId");
     final decodedResponse = json.decode(response.body);
 
     //get info of vouchers under the reward
@@ -105,7 +101,7 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
 
   Future<void> _achieveReward() async {
     final response = await widget.session.post(
-        "http://$addr/api/user/achieve-reward",
+        "$addr/api/user/achieve-reward",
         json.encode({
           "rewardId": widget.rewardId,
           "localId": widget.session.localId,

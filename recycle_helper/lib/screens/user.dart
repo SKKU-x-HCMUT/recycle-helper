@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:recycle_helper/auth_page.dart';
+import 'package:recycle_helper/screens/auth.dart';
 import 'package:recycle_helper/session.dart';
-
-const String addr = "172.30.1.82:5000";
+import 'package:recycle_helper/constraints.dart';
 
 class MyPage extends StatefulWidget {
   final Session session;
@@ -19,8 +18,8 @@ class _MyPageState extends State<MyPage> {
   Future<http.Response?> _getUserInfo() async {
     final http.Response response;
     try {
-      response = await widget.session
-          .get('http://$addr/api/user/${widget.session.localId}');
+      response =
+          await widget.session.get('$addr/api/user/${widget.session.localId}');
       if (response.statusCode == 200) {
         return response;
       } else {
@@ -33,7 +32,7 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future<void> _logout(BuildContext context) async {
-    final response = await widget.session.get("http://$addr/api/logout");
+    final response = await widget.session.get("$addr/api/logout");
     final decodedResponse = json.decode(response.body);
 
     if (context.mounted) {
@@ -58,14 +57,32 @@ class _MyPageState extends State<MyPage> {
           List<Widget> infoTiles = [];
           String rawData = snapshot.data!.body;
           Map decodedData = json.decode(rawData);
-          decodedData.forEach((key, value) {
-            infoTiles.add(Card(
-              child: ListTile(
-                leading: Text(key.toString()),
-                title: Text(value.toString()),
-              ),
-            ));
-          });
+
+          //get email
+          infoTiles.add(Card(
+            child: ListTile(
+              leading: const Text("Email Address"),
+              title: Text(decodedData["email"]),
+            ),
+          ));
+
+          //get points
+          infoTiles.add(Card(
+            child: ListTile(
+              leading: const Text("Points"),
+              title: Text(decodedData["points"].toString()),
+            ),
+          ));
+
+          infoTiles.add(const ListTile(title: Text("Vouchers")));
+
+          //TODO: mockup voucher yet. need to change to real data
+          infoTiles.add(Card(
+            child: ListTile(
+              title: const Text("Voucher 1"),
+              subtitle: Text("desciption of Voucher 1"),
+            ),
+          ));
 
           return Column(
             children: infoTiles +

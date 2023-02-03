@@ -1,10 +1,17 @@
-import 'dart:io';
-
 import 'package:http/http.dart' as http;
 
 class Session {
   Map<String, String> headers = {"Content-Type": "application/json"};
   String localId = "";
+
+  void updateCookie(http.Response response) {
+    String? rawCookie = response.headers['set-cookie'];
+    if (rawCookie != null) {
+      int index = rawCookie.indexOf(';');
+      headers['cookie'] =
+          (index == -1) ? rawCookie : rawCookie.substring(0, index);
+    }
+  }
 
   Future<http.Response> get(String url) async {
     http.Response response = await http.get(Uri.parse(url), headers: headers);
@@ -17,7 +24,7 @@ class Session {
     return response;
   }
 
-  Future<http.StreamedResponse> uploadPhoto(
+  Future<http.StreamedResponse> multipartRequest(
       String url, String imagePath) async {
     http.MultipartRequest request =
         http.MultipartRequest('POST', Uri.parse(url));
@@ -27,14 +34,5 @@ class Session {
 
     http.StreamedResponse response = await request.send();
     return response;
-  }
-
-  void updateCookie(http.Response response) {
-    String? rawCookie = response.headers['set-cookie'];
-    if (rawCookie != null) {
-      int index = rawCookie.indexOf(';');
-      headers['cookie'] =
-          (index == -1) ? rawCookie : rawCookie.substring(0, index);
-    }
   }
 }

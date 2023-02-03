@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:recycle_helper/capture_page.dart';
-import 'package:recycle_helper/reward_page.dart';
-import 'package:recycle_helper/my_page.dart';
+import 'package:recycle_helper/screens/capture.dart';
+import 'package:recycle_helper/screens/reward.dart';
+import 'package:recycle_helper/screens/user.dart';
 import 'package:recycle_helper/session.dart';
 
 class MainFrame extends StatefulWidget {
@@ -15,17 +15,18 @@ class MainFrame extends StatefulWidget {
 class _MainFrameState extends State<MainFrame> {
   int _selectedPageIndex = 1;
 
-  List<Widget> _getPages() => <Widget>[
-        RewardPage(session: widget.session),
-        CameraLoader(session: widget.session),
-        MyPage(session: widget.session),
-      ];
-
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = _getPages();
+    const List<String> titles = <String>["Rewards", "Capture", "My Page"];
+
+    final List<Widget> pages = <Widget>[
+      RewardPage(session: widget.session),
+      CameraLoader(session: widget.session),
+      MyPage(session: widget.session),
+    ];
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Main')),
+      appBar: AppBar(title: Text(titles.elementAt(_selectedPageIndex))),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(child: pages.elementAt(_selectedPageIndex)),

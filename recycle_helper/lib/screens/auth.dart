@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:recycle_helper/main_frame.dart';
+import 'package:recycle_helper/screens/mainframe.dart';
 import 'package:recycle_helper/session.dart';
-
-const String addr = "172.30.1.82:5000";
+import 'package:recycle_helper/constraints.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -26,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
       Session session = Session();
       try {
         final response = await session.post(
-          "http://$addr/api/login",
+          "$addr/api/login",
           json.encode({
             'email': _email,
             'password': _password,
@@ -131,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final url = Uri.parse('http://$addr/api/register');
+      final url = Uri.parse('$addr/api/register');
       final response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
