@@ -9,15 +9,15 @@ import 'package:recycle_helper/session.dart';
 
 import 'package:recycle_helper/views/login_view.dart';
 
-class MyPage extends StatefulWidget {
+class UserPage extends StatefulWidget {
   final Session session;
-  const MyPage({Key? key, required this.session}) : super(key: key);
+  const UserPage({Key? key, required this.session}) : super(key: key);
 
   @override
-  State<MyPage> createState() => _MyPageState();
+  State<UserPage> createState() => _UserPageState();
 }
 
-class _MyPageState extends State<MyPage> {
+class _UserPageState extends State<UserPage> {
   Future<Map?> _getUserInfo() async {
     final http.Response response;
     try {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:recycle_helper/session.dart';
 
-import 'package:recycle_helper/views/capture.dart';
+import 'package:recycle_helper/views/capture_view.dart';
 import 'package:recycle_helper/views/point_shop_view.dart';
 import 'package:recycle_helper/views/user_view.dart';
 
@@ -19,12 +19,12 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> titles = <String>["Point Shop", "Capture", "My Page"];
+    const List<String> titles = <String>["Point Shop", "Capture", "User"];
 
     final List<Widget> pages = <Widget>[
       PointShopPage(session: widget.session),
       CameraPermissionChecker(session: widget.session),
-      MyPage(session: widget.session),
+      UserPage(session: widget.session),
     ];
 
     return Scaffold(
