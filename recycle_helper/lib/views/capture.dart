@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+
+import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
-import 'package:permission_handler/permission_handler.dart';
-import 'package:recycle_helper/session.dart';
+
 import 'package:recycle_helper/constants.dart';
+import 'package:recycle_helper/session.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 // 1. CameraPermissionChecker first check for the permission
 class CameraPermissionChecker extends StatefulWidget {
@@ -38,27 +41,7 @@ class _CameraPermissionCheckerState extends State<CameraPermissionChecker> {
                 'Camera permission permanently denied. Please allow Camera permission through Settings.');
           }
           if (status.isGranted) {
-            return FutureBuilder<List<CameraDescription>>(
-              future: availableCameras(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data == null) {
-                    return const Text('Camera permission denied.');
-                  } else {
-                    if (snapshot.data!.isEmpty) {
-                      return const Text('No camera available.');
-                    } else {
-                      return CameraScreen(
-                        session: widget.session,
-                        camera: snapshot.data!.first,
-                      );
-                    }
-                  }
-                } else {
-                  return const Text('Searching for available cameras...');
-                }
-              },
-            );
+            return CameraLoader(session: widget.session);
           }
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -69,22 +52,59 @@ class _CameraPermissionCheckerState extends State<CameraPermissionChecker> {
   }
 }
 
-// A screen that allows users to take a picture using a given camera.
-class CameraScreen extends StatefulWidget {
+// 2. CameraLoader loads Camera after Permission is checked
+class CameraLoader extends StatefulWidget {
+  final Session session;
+
+  const CameraLoader({Key? key, required this.session}) : super(key: key);
+
+  @override
+  State<CameraLoader> createState() => _CameraLoaderState();
+}
+
+class _CameraLoaderState extends State<CameraLoader> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<CameraDescription>>(
+      future: availableCameras(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data == null) {
+            return const Text('Camera permission denied.');
+          } else {
+            if (snapshot.data!.isEmpty) {
+              return const Text('No camera available.');
+            } else {
+              return PreviewScreen(
+                session: widget.session,
+                camera: snapshot.data!.first,
+              );
+            }
+          }
+        } else {
+          return const Text('Searching for available cameras...');
+        }
+      },
+    );
+  }
+}
+
+// 3. Finally screen shows that allows users to take a picture using a given camera.
+class PreviewScreen extends StatefulWidget {
   final Session session;
   final CameraDescription camera;
 
-  const CameraScreen({
+  const PreviewScreen({
     super.key,
     required this.session,
     required this.camera,
   });
 
   @override
-  CameraScreenState createState() => CameraScreenState();
+  PreviewScreenState createState() => PreviewScreenState();
 }
 
-class CameraScreenState extends State<CameraScreen> {
+class PreviewScreenState extends State<PreviewScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
@@ -157,9 +177,9 @@ class CameraScreenState extends State<CameraScreen> {
             }
           },
         ),
-        ElevatedButton(
+        FilledButton(
           onPressed: _capture,
-          child: const Text('CAPTURE'),
+          child: const Text('Scan'),
         ),
       ],
     );

@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:recycle_helper/session.dart';
+
 import 'package:recycle_helper/constants.dart';
+import 'package:recycle_helper/session.dart';
 
 class RewardPage extends StatefulWidget {
   final Session session;
@@ -23,34 +24,32 @@ class _RewardPageState extends State<RewardPage> {
     return FutureBuilder<List<dynamic>>(
       future: _getRewards(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<Widget> rewardTiles = <Widget>[];
+        if (!snapshot.hasData) return const Text("Loading rewards...");
 
-          List<dynamic> rewards = snapshot.data!;
-          for (final reward in rewards) {
-            rewardTiles.add(Card(
-              child: ListTile(
-                title: Text(reward['name']),
-                subtitle: Text("${reward['pointsExchange']} Points"),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return RewardDetailPage(
-                        session: widget.session,
-                        rewardId: reward["rewardId"],
-                      );
-                    },
-                  ));
-                },
-              ),
-            ));
-          }
-          return Column(
-            children: rewardTiles,
-          );
-        } else {
-          return const Text("Loading rewards...");
+        List<Widget> rewardTiles = <Widget>[];
+
+        List<dynamic> rewards = snapshot.data!;
+        for (final reward in rewards) {
+          rewardTiles.add(Card(
+            child: ListTile(
+              title: Text(reward['name']),
+              subtitle: Text("${reward['pointsExchange']} Points"),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return RewardDetailPage(
+                      session: widget.session,
+                      rewardId: reward["rewardId"],
+                    );
+                  },
+                ));
+              },
+            ),
+          ));
         }
+        return Column(
+          children: rewardTiles,
+        );
       },
     );
   }

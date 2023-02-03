@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
-import 'package:recycle_helper/screens/mainframe.dart';
-import 'package:recycle_helper/session.dart';
+
 import 'package:recycle_helper/constants.dart';
+import 'package:recycle_helper/session.dart';
+
+import 'package:recycle_helper/views/main_view.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -38,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
           session.localId = decodedResponse['localId'];
 
           if (context.mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Logged in account: \"$_email\"")),
             );
@@ -46,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => MainFrame(session: session)),
+                  builder: (context) => MainView(session: session)),
             );
           }
         } else {
@@ -92,11 +96,17 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
               ),
               //submit button
-              ElevatedButton(
-                onPressed: () => _login(context),
+              FilledButton(
                 child: const Text('Login'),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Logging in...")),
+                  );
+                  _login(context);
+                },
               ),
-              TextButton(
+              FilledButton.tonal(
+                child: const Text('Register'),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -104,7 +114,6 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (context) => const RegisterPage()),
                   );
                 },
-                child: const Text('Register'),
               ),
             ],
           ),
