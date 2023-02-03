@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:recycle_helper/constants.dart';
 import 'package:recycle_helper/session.dart';
 
-class RewardPage extends StatefulWidget {
+class PointShopPage extends StatefulWidget {
   final Session session;
-  const RewardPage({Key? key, required this.session}) : super(key: key);
+  const PointShopPage({Key? key, required this.session}) : super(key: key);
   @override
-  State<RewardPage> createState() => _RewardPageState();
+  State<PointShopPage> createState() => _PointShopPageState();
 }
 
-class _RewardPageState extends State<RewardPage> {
+class _PointShopPageState extends State<PointShopPage> {
   Future<List<dynamic>> _getRewards() async {
     final response = await widget.session.get("$addr/api/rewards");
     List<dynamic> vouchers = json.decode(response.body);

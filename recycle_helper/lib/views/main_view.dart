@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:recycle_helper/session.dart';
 
 import 'package:recycle_helper/views/capture.dart';
-import 'package:recycle_helper/views/point_shop.dart';
-import 'package:recycle_helper/views/user.dart';
+import 'package:recycle_helper/views/point_shop_view.dart';
+import 'package:recycle_helper/views/user_view.dart';
 
 class MainView extends StatefulWidget {
   final Session session;
@@ -22,7 +22,7 @@ class _MainViewState extends State<MainView> {
     const List<String> titles = <String>["Point Shop", "Capture", "My Page"];
 
     final List<Widget> pages = <Widget>[
-      RewardPage(session: widget.session),
+      PointShopPage(session: widget.session),
       CameraPermissionChecker(session: widget.session),
       MyPage(session: widget.session),
     ];
