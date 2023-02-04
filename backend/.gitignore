@@ -1,2 +1,5 @@
 /env
 __pycache__
+
+# Comment out credentials.json when deploying
+credentials.json
