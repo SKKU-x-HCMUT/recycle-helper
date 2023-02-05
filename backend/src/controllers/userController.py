@@ -47,7 +47,7 @@ class UserController:
                 return f"An Error Occured: Cannot find user with localId {localId}", 500
 
             # create user model
-            user_object = User(userId=localId, email=user_info['email'], name=name, dob=dob, sex=sex, nationality=nationality, phone_number=phone_number, points=user_info['points'])
+            user_object = User(userId=localId, email=user_info['email'], name=name, dob=dob, sex=sex, nationality=nationality, phone_number=phone_number, points=user_info['points'], classification_count=user_info['classificationCount'])
 
             db.collection('users').document(localId).update(user_object.to_dict())
 
@@ -135,6 +135,50 @@ class UserController:
         except Exception as e:
             return { "message": f"An Error Occured: {e}" }, 500
 
+    @login_required
+    def add_points():
+        """
+            Add points to user and increment classificationCount when successfully classified trash
+        """
+        try:
+            # get information from request
+            localId = request.json.get('localId')
+
+            # find user in Firestore's "users" collection 
+            user_ref = db.collection('users').document(localId)
+            user_info = user_ref.get().to_dict()
+            if user_info == None:
+                return f"An Error Occured: Cannot find user with localId {localId}", 500
+
+            classification_count = user_info['classificationCount']
+            points = user_info['points']
+
+            # check adding points conditions
+            if classification_count == 0:
+                points_added = 10
+            elif classification_count < 50:
+                points_added = 1
+            elif classification_count < 100:
+                points_added = 2
+            else:
+                points_added = 3
+            
+            points += points_added
+            classification_count += 1
+            
+
+            # create user model
+            user_object = User(userId=localId, email=user_info['email'], name=user_info['name'], dob=user_info['dob'], sex=user_info['sex'], nationality=user_info['nationality'], 
+            phone_number=user_info['phoneNumber'], points=points, classification_count=classification_count)
+            
+            db.collection('users').document(localId).update(user_object.to_dict())
+
+            updated_user = user_ref.get().to_dict()
+            ret = {"points": updated_user["points"], "classificationCount": updated_user["classificationCount"], "pointsAdded": points_added}
+            return jsonify(ret), 200
+        except Exception as e:
+            return f"An Error Occured: {e}", 500
+
     # Authentication functions
     def register():
         """
@@ -150,7 +194,7 @@ class UserController:
             user = pbAuth.create_user_with_email_and_password(email, password)
 
             # create user on firestore
-            db.collection('users').document(user['localId']).set({"userId": user['localId'], "email": user['email'], "points": 0})
+            db.collection('users').document(user['localId']).set({"userId": user['localId'], "email": user['email'], "points": 0, "classificationCount": 0})
             return {'message': f'Successfully created user {user["email"]}'}, 200
         except Exception as e:
             return {'message': f'Error creating user: {e}'}, 500

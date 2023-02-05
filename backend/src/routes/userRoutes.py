@@ -22,3 +22,6 @@ userRouter.route("/user/<localId>/rewards", methods=['GET'])(UserController.get_
 
 # get user's vouchers
 userRouter.route("/user/<localId>/vouchers", methods=['GET'])(UserController.get_vouchers)
+
+# add points to user when succesfully classified trash using /predict
+userRouter.route("/user/add-points", methods=['PUT'])(UserController.add_points)
