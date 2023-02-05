@@ -21,8 +21,8 @@ class MlcallController:
 
     @login_required
     def predict_image_classification_sample(
-        project="203585176079",
-        endpoint_id="31723109484593152",
+        project="358337486383",
+        endpoint_id="302220562103533568",
         location="us-central1",
         api_endpoint= "us-central1-aiplatform.googleapis.com",
     ):

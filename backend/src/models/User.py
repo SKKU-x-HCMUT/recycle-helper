@@ -1,19 +1,20 @@
 class User(object):
-    def __init__(self, userId, email, name, dob, sex, nationality, phone_number, points, rewards=[], vouchers=[]):
+    def __init__(self, userId, email, name, dob, sex, nationality, phone_number, points, classification_count, rewards=[], vouchers=[]):
         self.userId = userId
         self.email = email
         self.name = name
         self.dob = dob
         self.sex = sex
         self.nationality = nationality
-        self.phone_number = phone_number
+        self.phoneNumber = phone_number
+        self.classificationCount = classification_count
         self.points = points
         self.rewards = rewards
         self.vouchers = vouchers
 
     def to_dict(self):
         return {"name": self.name, "dob": self.dob, "sex": self.sex, "nationality": self.nationality, 
-        "phone_number": self.phone_number, "email": self.email, "points": self.points}
+        "phoneNumber": self.phoneNumber, "email": self.email, "points": self.points, "classificationCount": self.classificationCount}
     
     def __repr__(self):
         return (
@@ -22,8 +23,9 @@ class User(object):
                 dob={self.dob}, \
                 sex={self.sex}, \
                 nationality={self.nationality}, \
-                phone_number={self.phone_number}\
+                phoneNumber={self.phoneNumber}\
                 email={self.email}\
                 points={self.points}\
+                classificationCount={self.classificationCount}\
             )'
         )
