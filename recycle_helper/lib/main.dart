@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primaryColor: Colors.lightGreen),
+      theme: ThemeData(primarySwatch: Colors.lightGreen),
       title: "Recycle Helper",
       home: const LoginPage(),
     );

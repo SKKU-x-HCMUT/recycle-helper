@@ -109,8 +109,6 @@ class PreviewScreenState extends State<PreviewScreen> {
   late Future<void> _initializeControllerFuture;
 
   void _capture() async {
-    // Take the Picture in a try / catch block. If anything goes wrong,
-    // catch the error.
     try {
       // Ensure that the camera is initialized.
       await _initializeControllerFuture;
@@ -147,7 +145,7 @@ class PreviewScreenState extends State<PreviewScreen> {
       // Get a specific camera from the list of available cameras.
       widget.camera,
       // Define the resolution to use.
-      ResolutionPreset.medium,
+      ResolutionPreset.low,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -202,24 +200,51 @@ class CaptureResultScreen extends StatefulWidget {
 
 class _CaptureResultScreenState extends State<CaptureResultScreen> {
   Future<String?> _getPredictionResult() async {
-    final http.StreamedResponse response;
-    try {
-      response = await widget.session
-          .multipartRequest('$addr/api/predict', widget.imagePath);
-      if (response.statusCode == 200) {
-        final responseBytes = await response.stream.toBytes();
-        final responseBody = utf8.decode(responseBytes);
-        return responseBody;
-      } else {
-        final responseBytes = await response.stream.toBytes();
-        final responseBody = utf8.decode(responseBytes);
-        print(responseBody);
-        throw Exception('_getPredictionResult() failed');
-      }
-    } catch (e) {
-      print(e);
+    // final http.StreamedResponse response;
+    // try {
+    //   response = await widget.session
+    //       .multipartRequest('$addr/api/predict', widget.imagePath);
+    //   if (response.statusCode == 200) {
+    //     final responseBytes = await response.stream.toBytes();
+    //     final responseBody = utf8.decode(responseBytes);
+    //     return responseBody;
+    //   } else {
+    //     print(response.reasonPhrase);
+    //     // final responseBytes = await response.stream.toBytes();
+    //     // final responseBody = utf8.decode(responseBytes);
+    //     // print(responseBody);
+    //     throw Exception('_getPredictionResult() failed');
+    //   }
+    // } catch (e) {
+    //   print(e);
+    // }
+    // return null;
+    return "";
+  }
+
+  String _getMarkPath(String country, String type) {
+    String markPath = "assets/marks/$country/";
+    switch (type) {
+      case "cardboard":
+        markPath += "cardboard.jpeg";
+        break;
+
+      case "glass":
+        markPath += "glass.jpg";
+        break;
+
+      case "metal":
+        markPath += "metal.jpg";
+        break;
+
+      case "plastic":
+        markPath += "plastic.jpg";
+        break;
+      default:
+        markPath += "dirty.jpg";
+        break;
     }
-    return null;
+    return markPath;
   }
 
   @override
@@ -228,41 +253,67 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
       appBar: AppBar(title: const Text('Result')),
 
       body: SingleChildScrollView(
-        child: FutureBuilder<String?>(
-          future: _getPredictionResult(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+        child: Center(
+          child: FutureBuilder<String?>(
+            future: _getPredictionResult(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Column(
+                  children: [
+                    Image.file(File(widget.imagePath)),
+                    const Text("Loading prediction result..."),
+                  ],
+                );
+              }
+
+              //final predictionResult = json.decode(snapshot.data!);
+              Map predictionResult = {
+                "type": "plastic",
+                "confidence": 0.87,
+              };
+
               return Column(
                 children: [
-                  Image.file(File(widget.imagePath)),
-                  const Text("Loading prediction result..."),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Image.file(
+                      File(widget.imagePath),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Image(
+                      image: AssetImage(
+                          _getMarkPath("ko", predictionResult["type"])),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                  Text(
+                    predictionResult["type"].toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "Confidence: ${(predictionResult["confidence"] * 100).round()}%",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    "Congratulations! You earned 5 points!",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
                 ],
               );
-            }
-
-            final predictionResult = json.decode(snapshot.data!);
-
-            return Column(
-              children: [
-                Image.file(File(widget.imagePath)),
-                Text(
-                  predictionResult["type"].toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "${(predictionResult["confidence"] * 100).round()}%",
-                  style: const TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Text("Congratulations! You earned 5 points!"),
-              ],
-            );
-          },
+            },
+          ),
         ),
       ),
       //Image.file(),
