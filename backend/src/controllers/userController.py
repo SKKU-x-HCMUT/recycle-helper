@@ -168,10 +168,12 @@ class UserController:
             
 
             # create user model
-            user_object = User(userId=localId, email=user_info['email'], name=user_info['name'], dob=user_info['dob'], sex=user_info['sex'], nationality=user_info['nationality'], 
-            phone_number=user_info['phoneNumber'], points=points, classification_count=classification_count)
+            user_object = {
+                "points": points,
+                "classificationCount": classification_count
+            }
             
-            db.collection('users').document(localId).update(user_object.to_dict())
+            db.collection('users').document(localId).update(user_object)
 
             updated_user = user_ref.get().to_dict()
             ret = {"points": updated_user["points"], "classificationCount": updated_user["classificationCount"], "pointsAdded": points_added}
