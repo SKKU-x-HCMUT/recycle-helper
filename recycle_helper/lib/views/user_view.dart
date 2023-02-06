@@ -85,27 +85,32 @@ class _UserPageState extends State<UserPage> {
           ),
         ));
 
-        Map vouchers = userInfo["vouchers"];
+        Map? vouchers = userInfo["vouchers"];
 
         List<Widget> userVoucherTiles = [
           const ListTile(title: Text("Vouchers")),
         ];
 
-        vouchers.forEach(
-          (key, value) {
-            final quantity = value["quantity"];
+        if (vouchers != null) {
+          vouchers.forEach(
+            (key, value) {
+              final quantity = value["quantity"];
 
-            // repeat as quantity
-            for (int i = 0; i < quantity; i++) {
-              userVoucherTiles.add(Card(
-                child: ListTile(
-                  title: Text(value["storeName"]),
-                  //subtitle: Text("desciption of Voucher"),
-                ),
-              ));
-            }
-          },
-        );
+              // repeat as quantity
+              for (int i = 0; i < quantity; i++) {
+                userVoucherTiles.add(Card(
+                  child: ListTile(
+                    title: Text(value["storeName"]),
+                    //subtitle: Text("desciption of Voucher"),
+                  ),
+                ));
+              }
+            },
+          );
+        } else {
+          userVoucherTiles.add(const Card(
+              child: ListTile(title: Text("No Vouchers Available."))));
+        }
 
         List<Widget> children = userInfoTiles +
             userVoucherTiles +

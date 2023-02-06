@@ -199,32 +199,49 @@ class CaptureResultScreen extends StatefulWidget {
 }
 
 class _CaptureResultScreenState extends State<CaptureResultScreen> {
-  Future<String?> _getPredictionResult() async {
-    // final http.StreamedResponse response;
-    // try {
-    //   response = await widget.session
-    //       .multipartRequest('$addr/api/predict', widget.imagePath);
-    //   if (response.statusCode == 200) {
-    //     final responseBytes = await response.stream.toBytes();
-    //     final responseBody = utf8.decode(responseBytes);
-    //     return responseBody;
-    //   } else {
-    //     print(response.reasonPhrase);
-    //     // final responseBytes = await response.stream.toBytes();
-    //     // final responseBody = utf8.decode(responseBytes);
-    //     // print(responseBody);
-    //     throw Exception('_getPredictionResult() failed');
-    //   }
-    // } catch (e) {
-    //   print(e);
-    // }
-    // return null;
-    return "";
+  int pointsAdded = 0;
+
+  Future<int> _addPoint() async {
+    final response = await widget.session.put(
+      '$addr/api/user/add-points',
+      json.encode({"localId": widget.session.localId}),
+    );
+    if (response.statusCode == 200) {
+      final decodedResponse = json.decode(response.body);
+      return decodedResponse["pointsAdded"];
+    } else {
+      return 0;
+    }
   }
 
+  Future<String?> _getPredictionResult() async {
+    final http.StreamedResponse response;
+    try {
+      response = await widget.session
+          .multipartRequest('$addr/api/predict', widget.imagePath);
+      if (response.statusCode == 200) {
+        pointsAdded = await _addPoint();
+        // if (pointsAdded == 0) throw Exception('_addPoint() failed'); //TODO
+        final responseBytes = await response.stream.toBytes();
+        final responseBody = utf8.decode(responseBytes);
+        return responseBody;
+      } else {
+        print(response.reasonPhrase);
+        // final responseBytes = await response.stream.toBytes();
+        // final responseBody = utf8.decode(responseBytes);
+        // print(responseBody);
+        throw Exception('_getPredictionResult() failed');
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  // hard coded right now, and only for Korean Marks
   String _getMarkPath(String country, String type) {
     String markPath = "assets/marks/$country/";
-    switch (type) {
+    switch (type.toLowerCase()) {
       case "cardboard":
         markPath += "cardboard.jpeg";
         break;
@@ -240,6 +257,7 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
       case "plastic":
         markPath += "plastic.jpg";
         break;
+
       default:
         markPath += "dirty.jpg";
         break;
@@ -266,11 +284,12 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
                 );
               }
 
-              //final predictionResult = json.decode(snapshot.data!);
-              Map predictionResult = {
-                "type": "plastic",
-                "confidence": 0.87,
-              };
+              Map predictionResult = json.decode(snapshot.data!);
+
+              // predictionResult = {
+              //   "type": "plastic",
+              //   "confidence": 0.87,
+              // };
 
               return Column(
                 children: [
@@ -303,9 +322,9 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text(
-                    "Congratulations! You earned 5 points!",
-                    style: TextStyle(
+                  Text(
+                    "Congratulations! You earned $pointsAdded points!",
+                    style: const TextStyle(
                       fontSize: 18,
                       color: Colors.blueAccent,
                     ),

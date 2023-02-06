@@ -24,6 +24,12 @@ class Session {
     return response;
   }
 
+  Future<http.Response> put(String url, dynamic data) async {
+    http.Response response =
+        await http.put(Uri.parse(url), body: data, headers: headers);
+    return response;
+  }
+
   Future<http.StreamedResponse> multipartRequest(
       String url, String imagePath) async {
     http.MultipartRequest request =

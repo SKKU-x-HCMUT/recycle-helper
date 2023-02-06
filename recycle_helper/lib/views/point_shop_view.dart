@@ -100,11 +100,12 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
 
   Future<void> _achieveReward() async {
     final response = await widget.session.post(
-        "$addr/api/user/achieve-reward",
-        json.encode({
-          "rewardId": widget.rewardId,
-          "localId": widget.session.localId,
-        }));
+      "$addr/api/user/achieve-reward",
+      json.encode({
+        "rewardId": widget.rewardId,
+        "localId": widget.session.localId,
+      }),
+    );
 
     if (response.statusCode == 200) {
       if (context.mounted) {
@@ -116,7 +117,7 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Error")),
+          const SnackBar(content: Text("You don't have enough points.")),
         );
       }
     }
