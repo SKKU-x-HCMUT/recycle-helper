@@ -12,7 +12,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.lightGreen),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        // primarySwatch: Colors.lightGreen,
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.all(12.0),
+            textStyle: const TextStyle(fontSize: 16),
+          ),
+        ),
+        useMaterial3: true,
+        colorSchemeSeed: Colors.green,
+      ),
       title: "Recycle Helper",
       home: const LoginPage(),
     );

@@ -128,7 +128,7 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Reward Detail')),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<Map<String, dynamic>>(
           future: _getRewardInfo(widget.rewardId),
           builder: (context, snapshot) {
@@ -173,9 +173,12 @@ class _RewardDetailPageState extends State<RewardDetailPage> {
             return Column(
                 children: detailTiles +
                     [
-                      ElevatedButton(
-                        onPressed: () => _achieveReward(),
-                        child: const Text('Achieve Reward'),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: () => _achieveReward(),
+                          child: const Text('Achieve Reward'),
+                        ),
                       ),
                     ]);
           },

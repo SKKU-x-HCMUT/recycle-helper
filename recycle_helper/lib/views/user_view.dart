@@ -115,13 +115,17 @@ class _UserPageState extends State<UserPage> {
         List<Widget> children = userInfoTiles +
             userVoucherTiles +
             [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+              const SizedBox(height: 20.0),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () => _logout(context),
+                  child: const Text('Logout'),
                 ),
-                onPressed: () => _logout(context),
-                child: const Text('Logout'),
               )
             ];
 

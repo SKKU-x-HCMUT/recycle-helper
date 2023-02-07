@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -94,25 +94,33 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
               ),
-              //submit button
-              ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Logging in...")),
-                  );
-                  _login(context);
-                },
-                child: const Text('Login'),
+
+              const SizedBox(height: 20.0),
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Logging in...")),
+                    );
+                    _login(context);
+                  },
+                  child: const Text('Login'),
+                ),
               ),
-              OutlinedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RegisterPage()),
-                  );
-                },
-                child: const Text('Register'),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonal(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterPage()),
+                    );
+                  },
+                  child: const Text('Register'),
+                ),
               ),
             ],
           ),

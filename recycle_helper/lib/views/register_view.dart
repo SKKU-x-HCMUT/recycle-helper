@@ -56,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Registration')),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -84,10 +84,15 @@ class _RegisterPageState extends State<RegisterPage> {
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
               ),
-              //submit button
-              ElevatedButton(
-                onPressed: () => _register(context),
-                child: const Text('Register'),
+
+              const SizedBox(height: 20.0),
+
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => _register(context),
+                  child: const Text('Register'),
+                ),
               ),
             ],
           ),

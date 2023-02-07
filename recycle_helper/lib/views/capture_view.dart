@@ -168,16 +168,23 @@ class PreviewScreenState extends State<PreviewScreen> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               // If the Future is complete, display the preview.
-              return CameraPreview(_controller);
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: CameraPreview(_controller),
+              );
             } else {
               // Otherwise, display a loading indicator.
               return const Center(child: CircularProgressIndicator());
             }
           },
         ),
-        ElevatedButton(
-          onPressed: _capture,
-          child: const Text('Scan'),
+        const SizedBox(height: 20.0),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: _capture,
+            child: const Text('Scan'),
+          ),
         ),
       ],
     );
@@ -283,67 +290,66 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Result')),
       body: SingleChildScrollView(
-        child: Center(
-          child: FutureBuilder<String?>(
-            future: _getPredictionResult(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Column(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Image.file(
-                        File(widget.imagePath),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                    const Text("Loading prediction result..."),
-                  ],
-                );
-              }
-
-              Map predictionResult = json.decode(snapshot.data!);
-
-              // predictionResult = {
-              //   "type": "plastic",
-              //   "confidence": 0.87,
-              // };
-
-              return Column(
-                children: [
-                  SizedBox(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Image.file(
                       File(widget.imagePath),
                       fit: BoxFit.fitWidth,
                     ),
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: Image(
-                      image: AssetImage(
-                          _getMarkPath("ko", predictionResult["type"])),
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                  Text(
-                    predictionResult["type"].toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    "Confidence: ${(predictionResult["confidence"] * 100).round()}%",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).padding.bottom),
-                ],
-              );
-            },
+                ),
+                FutureBuilder<String?>(
+                  future: _getPredictionResult(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Text("Loading prediction result...");
+                    }
+
+                    Map predictionResult = json.decode(snapshot.data!);
+
+                    // predictionResult = {
+                    //   "type": "plastic",
+                    //   "confidence": 0.87,
+                    // };
+
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: Image(
+                            image: AssetImage(
+                                _getMarkPath("ko", predictionResult["type"])),
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                        Text(
+                          predictionResult["type"].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "Confidence: ${(predictionResult["confidence"] * 100).round()}%",
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: MediaQuery.of(context).padding.bottom),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

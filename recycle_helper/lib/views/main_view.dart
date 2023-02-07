@@ -15,7 +15,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  int _selectedPageIndex = 1;
+  int currentPageIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -28,35 +28,35 @@ class _MainViewState extends State<MainView> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text(titles.elementAt(_selectedPageIndex))),
+      appBar: AppBar(title: Text(titles.elementAt(currentPageIndex))),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: Center(child: pages.elementAt(_selectedPageIndex)),
+          child: Center(child: pages.elementAt(currentPageIndex)),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
             icon: Icon(Icons.shop),
             label: 'Reward Shop',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.camera),
             label: 'Capture',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.person),
             label: 'My Page',
           ),
         ],
-        currentIndex: _selectedPageIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedPageIndex = index;
-          });
-        },
       ),
     );
   }
