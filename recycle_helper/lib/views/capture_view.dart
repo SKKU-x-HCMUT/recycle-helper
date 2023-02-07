@@ -242,8 +242,13 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
   String _getMarkPath(String country, String type) {
     String markPath = "assets/marks/$country/";
     switch (type.toLowerCase()) {
+      case "paper":
+        markPath += "paper.jpeg";
+        break;
+
+      //cardboard == paper in Korea
       case "cardboard":
-        markPath += "cardboard.jpeg";
+        markPath += "paper.jpeg";
         break;
 
       case "glass":
