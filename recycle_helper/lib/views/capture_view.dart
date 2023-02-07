@@ -221,7 +221,15 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
           .multipartRequest('$addr/api/predict', widget.imagePath);
       if (response.statusCode == 200) {
         pointsAdded = await _addPoint();
-        // if (pointsAdded == 0) throw Exception('_addPoint() failed'); //TODO
+        if (pointsAdded == 0) throw Exception('_addPoint() failed');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Congratulations! You earned $pointsAdded points!"),
+            ),
+          );
+        }
+
         final responseBytes = await response.stream.toBytes();
         final responseBody = utf8.decode(responseBytes);
         return responseBody;
@@ -274,7 +282,6 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Result')),
-
       body: SingleChildScrollView(
         child: Center(
           child: FutureBuilder<String?>(
@@ -283,7 +290,13 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
               if (!snapshot.hasData) {
                 return Column(
                   children: [
-                    Image.file(File(widget.imagePath)),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Image.file(
+                        File(widget.imagePath),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
                     const Text("Loading prediction result..."),
                   ],
                 );
@@ -327,20 +340,13 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    "Congratulations! You earned $pointsAdded points!",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.blueAccent,
-                    ),
-                  ),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom),
                 ],
               );
             },
           ),
         ),
       ),
-      //Image.file(),
     );
   }
 }
