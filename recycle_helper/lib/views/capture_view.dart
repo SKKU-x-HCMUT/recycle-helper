@@ -221,7 +221,11 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
     }
   }
 
-  Future<String?> _getPredictionResult() async {
+  Future<Map?> _getPredictionResult() async {
+    // return {
+    //   "type": "plastic",
+    //   "confidence": 0.87,
+    // };
     final http.StreamedResponse response;
     try {
       response = await widget.session
@@ -239,7 +243,7 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
 
         final responseBytes = await response.stream.toBytes();
         final responseBody = utf8.decode(responseBytes);
-        return responseBody;
+        return json.decode(responseBody);
       } else {
         print(response.reasonPhrase);
         // final responseBytes = await response.stream.toBytes();
@@ -305,19 +309,14 @@ class _CaptureResultScreenState extends State<CaptureResultScreen> {
                     ),
                   ),
                 ),
-                FutureBuilder<String?>(
+                FutureBuilder<Map?>(
                   future: _getPredictionResult(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const Text("Loading prediction result...");
                     }
 
-                    Map predictionResult = json.decode(snapshot.data!);
-
-                    // predictionResult = {
-                    //   "type": "plastic",
-                    //   "confidence": 0.87,
-                    // };
+                    Map predictionResult = snapshot.data!;
 
                     return Column(
                       children: [
